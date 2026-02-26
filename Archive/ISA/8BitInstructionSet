@@ -1,0 +1,77 @@
+<REGISTER ADDRESSES>
+[00] REGA
+[01] REGB
+[10] REGC
+[11] ALU
+
+<ALU OPCODE>
+{000} A + B
+{001} A - B
+{010} -A
+{011} A += 1
+{100} A -= 1
+
+<PC OPCODE>
+[00] Pause
+[01] Increment
+[10] Reset
+[11] Override
+
+<PHASE COUNTER>
+T0 - Tick (Increment PC & Decode)
+T1 - Read (Read & ALU)
+T2 - Write
+
+<INSTRUCTIONS>
+NONE (000000)
+0[000000,00,00000000] NOTH - No Instruction
+0[000000,11,00000000] HALT - Stop Instructions
+
+MEM & REG (000)
+2[000010,xx,aaaaaaaa] LODa - SET REGx to ADDR
+3[000011,xx,iiiiiiii] LODi - SET REGx to IMMD
+4[000100,xx,aaaaaaaa] STOR - SET ADDR to REGx
+6[000110,xx,yy000000] MOVE - SET REGx to REGy
+
+ALU (001)
+8[001000,xx,yy000000] ADDr - ADD REGy to REGx {000}
+9[001001,xx,yy000000] SUBr - SUB REGy from REGx {001}
+10[001010,xx,iiiiiiii] ADDi - ADD IMMD to REGx {000}
+11[001011,xx,iiiiiiii] SUBi - SUB IMMD from REGx {001}
+12[001100,xx,00000000] INCR - INCREMENT REGx {011}
+14[001110,xx,00000000] DECR - DECREMENT REGx {100}
+15[001111,xx,00000000] NEGA - NEGATIVE REGx {010}
+
+LOG
+34[100010,xx,yy000000] LGAN - AND REGx and REGy
+36[100100,xx,yy000000] LGOR - OR REGx and REGy
+38[100110,xx,yy000000] LGXO - XOR REGx and REGy
+40[101000,xx,00000000] LGNO - NOT REGx
+
+JMP
+43[101011,00,iiiiiiii] JPUA - JUMP to IMMD
+45[101101,00,iiiiiiii] JPUi - JUMP to PC + IMMD
+47[101111,xx,iiiiiiii] JPUr - JUMP to REGx
+49[110001,00,iiiiiiii] JPZi - JUMP to PC + IMMD, IF Z FLAG
+51[110011,xx,iiiiiiii] JPZr - JUMP to REGx, IF Z FLAG
+53[110101,00,iiiiiiii] JPLi - JUMP to PC + IMMD, IF N FLAG
+55[110111,xx,iiiiiiii] JPLr - JUMP to REGx, IF N FLAG
+57[111001,00,iiiiiiii] JPGi - JUMP to PC + IMMD, IF NOT Z AND NOT N FLAG
+59[111011,xx,iiiiiiii] JPGr - JUMP to REGx, IF NOT Z AND NOT N FLAG
+
+<ASSEMBLY CODE>
+mem.loada(67,A) Load ADDR (67) in REG (A)
+mem.loadi(5,B) Load IMMD (5) in REG (B)
+mem.store(B,67) Store REG (B) in ADDR (67)
+mem.move(B,A) Move REG (B) to REG (A)
+alu.reg(A + B) Add REG (A) to REG (B)
+alu.immd(A + 7) Add IMMD (7) to REG (A)
+alu.incr(A) Increment REG (A)
+alu.decr(B) Decrement REG (B)
+alu.negt(A) Negate REG (A)
+logic.and(A,B)
+logic.or(A,B)
+logic.xor(A,B)
+logic.not(A)
+op.noth()
+op.halt()

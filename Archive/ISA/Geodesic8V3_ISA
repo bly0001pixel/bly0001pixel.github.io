@@ -1,0 +1,72 @@
+==INSTRUCTIONS==
+<STRUCTURE>
+(0)
+OPC, UN
+0000 0000
+
+(RR)
+OPC, Rx, Ry
+0000 00  00
+
+(RA)
+OPC, Rx, A(H) - A(L)
+0000 00  00     00000000
+
+(RI)
+OPC, Rx, UN - IMMD
+0000 00  00   00000000
+
+(I)
+OPC, UN  -  IMMD
+0000 0000   00000000
+
+(R)
+OPC, Rx, UN
+0000 00  00
+
+(OUT)
+OPC, OPC2
+0000 0000
+
+
+<OPC>
+0: NOP - (0)  No Operation
+1: HLT - (0)  Halt Clock
+2: MOV - (RR) REG = REG
+3: LDA - (RA) REG = ADDR
+4: LDI - (RI) REG = IMMD
+5: STR - (RA) ADDR = REG
+6: ADD - (RR) REG = REG + REG
+7: INC - (R)  REG = REG + 1
+8: SUB - (RR) REG = REG - REG
+9: DEC - (R)  REG = REG - 1
+10: NND - (RR) REG = REG ~& REG
+11: NOR - (RR) REG = REG ~| REG
+12: JMP - (I)  PC = IMMD
+13: JNZ - (I)  PC = IMMD if ~Z
+14: JNN - (I)  PC = IMMD if ~N
+15: OUT - (0)  Out Pin
+
+<REG>
+1: REG A
+2: REG B
+3: REG C
+4: REG D
+
+<MEM>
+ADDR:
+Program Memory:
+9 Bits = 512 Addresses = 512B = 0.5KB
+Main Memory:
+10 Bits = 1024 Addresses = 1024B = 1KB
+
+<OUT>
+OPC2
+0: CLEAR
+1: PRINT REG A
+2: PRINT REG B
+3: PRINT REG C
+4: PRINT REG D
+5: PRINT ALL REG
+6: PRINT FLAG Z
+7: PRINT FLAG N

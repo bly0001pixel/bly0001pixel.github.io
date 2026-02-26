@@ -1,0 +1,6 @@
+size:7,10,1;
+learningRate:0.3;
+maxEpochs:100000;
+targetCost:0.1;
+momentum,:0.1;
+outputFile:output.txt

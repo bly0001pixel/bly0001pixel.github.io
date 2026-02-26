@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Jonathan's Cube Clicker</title>
+
+        <style>
+            body {
+                background-color:white;
+                text-align: center;
+            }
+
+            h1 {
+                color:black;
+                justify-items: left;
+            }
+
+            p1 {
+                color:black;
+                justify-content: left;
+                font-size: 30px;
+            }
+
+            #clicker {
+                --scale: 1;
+                animation: spin 20s linear infinite;
+            }
+
+            @keyframes spin {
+                from { transform: rotate(0deg) scale(var(--scale)); }
+                to   { transform: rotate(360deg) scale(var(--scale)); }
+            }
+
+            button {
+                display: flex;
+                flex-direction: row !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                gap: 15px;
+            }
+
+            button span {
+                font-size: 20px;
+            }
+
+            .buttonImage {
+                display: flex;
+                width: 45px;
+                height: 45px;
+                padding-bottom: 10px;
+                padding-top: 10px;
+            }
+
+            .buttonImage2 {
+                display: flex;
+                width: 55px;
+                height: 55px;
+                padding-bottom: 10px;
+                padding-top: 10px;
+            }
+
+            .upgradeButtons {
+                text-align: center;
+                padding-top: 40;
+            }
+
+            .tab {
+                overflow: hidden;
+                border: 1px solid #000000;
+                background-color: #ffffff;
+            }
+
+            .tab button {
+                background-color: inherit;
+                float: left;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                padding: 14px 16px;
+                transition: 0.3s;
+            }
+
+            .tab button:hover {
+                background-color: navy;
+                color: white;
+            }
+            
+            .tab button.active {
+                background-color: rgb(48, 160, 197);
+            }
+
+            .tabContent {
+                display:none;
+                padding: 6px 12px;
+                border: 1px solid #ffffff
+            }
+
+            p2 {
+                font-size: 15px;
+                border: 1px solid #000000;
+                text-align: center;
+                padding: 5px
+            }
+
+        </style>
+    </head>
+    <body>        
+        <div class="tab">
+            <button class="tabLinks" onclick="openTab(event, 'homeTab')" id="defaultOpen">Home</button>
+            <button class="tabLinks" onclick="openTab(event, 'sourcesTab')">XP Sources</button>
+            <button class="tabLinks" onclick="openTab(event, 'upgradesTab')">Upgrades</button>
+        </div>
+        
+        <div id="homeTab" class="tabContent">
+            <center>
+            <h1>Cube Clicker</h1>
+            <p1 id="xpCount">0 Experience</p1>
+            <br>
+            <p1 id="cpsCount">0 Experience per second</p1>
+            <br><br>
+            <img id="clicker" src="dirt block.gif" alt="Spinning Dirt Block">
+            </center>
+        </div>
+
+        <div id="sourcesTab" class="tabContent">
+            <center>
+            <p1 id="xpCount1">0 Experience</p1>
+
+            <h3>Buy XP Sources:</h3>
+
+            <div class="sourceButtons">
+                <img class="buttonImage" id="pickaxeImage" src="WoodenPickaxe.png">
+                <button id="pickaxeButton">
+                    <span id="pickaxeButtonText"></span>
+                </button>
+
+                <img class="buttonImage" id="furnaceImage" src="LitFurnace.png">
+                <button id="furnaceButton">
+                    <span id="furnaceButtonText"></span>
+                </button>
+
+                <button id="villagerButton">
+                    <span id="villagerButtonText"></span>
+                </button>
+
+                <button id="mobFarmButton">
+                    <span id="mobFarmButtonText"></span>
+                </button>
+            </div>
+            </center>
+        </div>
+
+        <div id="upgradesTab" class="tabContent">
+            <p1 id="xpCount2">0 Experience</p1>  
+            <br>
+            <h3>Buy XP Sources:</h3>
+
+            <div class="upgradeButtons">
+                <center>
+                <img class="buttonImage2" id="clickUpgradeImage" src="enchanted book.gif">
+                <button id="clickUpgradeButton">
+                    <span id="clickUpgradeText"></span>
+                </button>
+                <img class="buttonImage2" id="randomUpgradeImage" src="enchanted book.gif">
+                <button id="randomUpgradeButton">
+                    <span id="randomUpgradeText"></span>
+                </button>
+                </center>
+            </div>
+
+            <div>
+                <p2 class="toolTip" id="clickUpgradeTT">Doubles the output of clicking</p2>
+                <p2 class="toolTip" id="randomUpgradeTT">Doubles the chance of a click revealing a large ore vein</p2>
+            </div>
+        </div>
+
+        <script>
+            let cookies = 0;
+            let clickRate = 1;
+
+            let pickaxePrice = 15;
+            let pickaxes = 0;
+            let pickaxeRate = 0.1;
+
+            let furnacePrice = 100;
+            let furnaces = 0;
+            let furnaceRate = 1;
+
+            let villagerPrice = 1000;
+            let villagers = 0;
+            let villagerRate = 5;
+
+            let mobFarmPrice = 5000;
+            let mobFarms = 0;
+            let mobFarmRate = 20;
+
+            let priceIncrease = 1.2;
+            let upgradePriceIncrease = 5;
+
+            const levels = ["I","II","III","IV","V","VI","VII","VIII","IX","X"]
+            
+            const clicker = document.getElementById("clicker")
+
+            const pickaxeButton = document.getElementById("pickaxeButton")
+            const pickaxeImage = document.getElementById("pickaxeImage")
+            const furnaceButton = document.getElementById("furnaceButton")
+            const furnaceImage = document.getElementById("furnaceImage")
+            const villagerButton = document.getElementById("villagerButton")
+            const mobFarmButton = document.getElementById("mobFarmButton")
+
+            const pickaxeButtonText = document.getElementById("pickaxeButtonText")
+            const furnaceButtonText = document.getElementById("furnaceButtonText")
+            const villagerButtonText = document.getElementById("villagerButtonText")
+            const mobFarmButtonText = document.getElementById("mobFarmButtonText")
+
+            const clickUpgradeButton = document.getElementById("clickUpgradeButton")
+            const randomUpgradeButton = document.getElementById("randomUpgradeButton")
+
+            const clickUpgradeText = document.getElementById("clickUpgradeText")
+            const randomUpgradeText = document.getElementById("randomUpgradeText")
+
+            let clickUpgradeLevel = 0
+            let clickUpgradePrice = 100
+
+            let randomUpgradeLevel = 0
+            let randomUpgradePrice = 1000
+
+            document.getElementById("defaultOpen").click()
+
+            function openTab(event, tabName) {
+                var i, tabContent, tabLinks;
+
+                tabContent = document.getElementsByClassName("tabContent");
+                for (i = 0; i < tabContent.length; i++) {
+                    tabContent[i].style.display = "none";
+                }
+                
+                tabLinks = document.getElementsByClassName("tabLinks");
+                for (i = 0; i < tabLinks.length; i++) {
+                    tabLinks[i].className = tabLinks[i].className.replace(" active", "");
+                }    
+
+                document.getElementById(tabName).style.display = "block";
+                event.currentTarget.className += " active";
+            }
+
+            clicker.addEventListener("click", () => {
+                cookies += clickRate * (2**clickUpgradeLevel);
+                clicker.style.setProperty("--scale", "1.05");
+
+                setTimeout(() => {
+                    clicker.style.setProperty("--scale", "1");
+                }, 100);
+            });
+
+            pickaxeButton.addEventListener("click", () => {
+                if (cookies >= pickaxePrice) {
+                    pickaxes += 1;
+                    cookies -= pickaxePrice;
+                    pickaxePrice = Math.round(pickaxePrice * priceIncrease);
+                }
+            });
+
+            furnaceButton.addEventListener("click", () => {
+                if (cookies >= furnacePrice) {
+                    furnaces += 1;
+                    cookies -= furnacePrice;
+                    furnacePrice = Math.round(furnacePrice * priceIncrease);
+                }
+            });
+
+            villagerButton.addEventListener("click", () => {
+                if (cookies >= villagerPrice) {
+                    villagers += 1;
+                    cookies -= villagerPrice;
+                    villagerPrice = Math.round(villagerPrice * priceIncrease);
+                }
+            });
+
+            mobFarmButton.addEventListener("click", () => {
+                if (cookies >= mobFarmPrice) {
+                    mobFarms += 1;
+                    cookies -= mobFarmPrice;
+                    mobFarmPrice = Math.round(mobFarmPrice * priceIncrease);
+                }
+            });
+
+            clickUpgradeButton.addEventListener("click", () => {
+                if (cookies >= clickUpgradePrice && clickUpgradeLevel < levels.length - 1) {
+                    clickUpgradeLevel += 1;
+                    cookies -= clickUpgradePrice;
+                    clickUpgradePrice = Math.round(clickUpgradePrice * upgradePriceIncrease);
+                }
+            })
+
+            randomUpgradeButton.addEventListener("click", () => {
+                if (cookies >= randomUpgradePrice && randomUpgradeLevel < levels.length - 1) {
+                    randomUpgradeLevel += 1;
+                    cookies -= randomUpgradePrice;
+                    randomUpgradePrice = Math.round(randomUpgradePrice * upgradePriceIncrease);
+                }
+            })
+
+            function loop() {
+                let increment = 0;
+                increment += pickaxes * pickaxeRate * 0.0166666;
+                increment += furnaces * furnaceRate * 0.0166666;
+                increment += villagers * villagerRate * 0.0166666;
+                increment += mobFarms * mobFarmRate * 0.0166666;
+                cookies += increment;
+
+                document.getElementById("xpCount").textContent = Math.round(cookies) + " Experience";
+                document.getElementById("xpCount1").textContent = Math.round(cookies) + " Experience";
+                document.getElementById("xpCount2").textContent = Math.round(cookies) + " Experience";
+                document.getElementById("cpsCount").textContent = Math.round(increment * 60) + " Experience per second";
+
+                pickaxeButtonText.textContent = "Pickaxe (" + pickaxeRate + " cps) = " + Math.round(pickaxePrice);
+                furnaceButtonText.textContent = "Furnace (" + furnaceRate + " cps) = " + Math.round(furnacePrice);
+                villagerButtonText.textContent = "Villager (" + villagerRate + " cps) = " + Math.round(villagerPrice);
+                mobFarmButtonText.textContent = "Mob Farm (" + mobFarmRate + " cps) = " + Math.round(mobFarmPrice);
+
+                furnaceButton.style.display = pickaxes > 0 ? "block" : "none";
+                furnaceImage.style.display = pickaxes > 0 ? "block" : "none";
+                villagerButton.style.display = furnaces > 0 ? "block" : "none";
+                mobFarmButton.style.display = villagers > 0 ? "block" : "none";
+
+                clickUpgradeText.textContent = "Effeciency " + levels[clickUpgradeLevel] + " = " + Math.round(clickUpgradePrice);
+                randomUpgradeText.textContent = "Fortune " + levels[randomUpgradeLevel] + " = " + Math.round(randomUpgradePrice);
+
+                requestAnimationFrame(loop);
+            }
+
+            loop();
+        </script>
+
+    </body>
+</html>

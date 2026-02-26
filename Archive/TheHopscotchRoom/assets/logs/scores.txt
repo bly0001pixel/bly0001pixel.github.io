@@ -1,0 +1,3 @@
+easyHighScoreSec=99999999
+mediumHighScoreSec=99999999
+hardHighScoreSec=8

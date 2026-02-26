@@ -1,0 +1,18 @@
+Fibbonaci Sequence:
+(Reg4 Sets Loop Length)
+set 0#1
+set 1#1
+set 2#0
+set 3#1
+set 4#10
+set 5#1
+prt 0
+prt 1
+jic 3&4#7
+add 0&1%2
+mov 1%0
+mov 2%1
+add 3&5%3
+prt 1
+ret 7
+

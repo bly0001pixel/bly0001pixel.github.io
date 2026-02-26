@@ -1,0 +1,55 @@
+==INSTRUCTIONS==
+<OPCODE>
+0000 0 M NOP [No Operation, Halt]
+0001 1 M LOD Load ([ADDR,IMMD] -> REGx)
+0010 2   STR Store (REGx -> ADDR)
+0011 3 M TRN Transfer (REGx [->,<-] REGt)
+0100 4 M ALA [Add,Subtract] (REGx +- ADDR)
+0101 5 M ALI [Add,Subtract] (REGx +- IMMD)
+0110 6   JMP Unconditional Jump (IMMD -> PC)
+0111 7 M JPZ Jump If Zero [T,F] (IMMD -> PC)
+1000 8 M JPN Jump If Negt [T,F] (IMMD -> PC)
+1001 9   AND Logic AND (REGx & ADDR)
+1010 10  LOR Logic OR (REGx | ADDR)
+1011 11M ANB Logic A [AND/OR] NOT B (REGx [&,|] ~ADDR)
+1100 12  NOT Logic NOT (~REGx)
+1101 13M LSH Logic Shift [L,R] (REGx)
+1110 14  ASH Arithmetic Shift (REGx)
+1111 15  UPD Update Output Port
+
+<MODIFIER>
+M: [0,1]
+No M: Unused
+
+<REGISTERS>
+00 A
+01 B
+10 C
+11 ALU
+
+<ADDRESS/IMMD>
+MOD = 0: 9b ADDR
+MOD = 1: 1b UNUSED + 8b IMMD
+
+<INSTRUCTION STRUCTURE>
+OPCODE, MOD, REG, ADDR/IMMD
+0000    0    00   000000000
+
+==ALU==
+0000 0 ADD
+0010 2 SUB
+0100 4 LSH L
+0101 5 LSH R
+0111 7 ASH R
+1000 8 AND
+1001 9 OR
+1010 10 A AND NOT B
+1011 11 A OR NOT B
+1100 12 NOT
+
+==JMP==
+(JMP UC Unconditional)
+00 Zero
+01 Not Zero
+10 Negative
+11 Not Negative

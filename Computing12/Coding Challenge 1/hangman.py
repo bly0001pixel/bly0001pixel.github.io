@@ -60,13 +60,16 @@ def display_word(answerCorrect, answerList):
 #Initialise answer and incorrect guesses list
 answerWord, answerList, answerCorrect = pick_word(os.path.join(dir_path,"words.txt"))
 incorrect = []
+#0 = Playing, 1 = Win, 2 = Lose
+winState = 0
 
 while True:
     cls()
 
     #Check if too many incorrect guesses
     if len(incorrect) > 10:
-        print("You lost")
+        winState = 2
+        break
     #Main gameplay loop
     else:
         #Debug:
@@ -103,9 +106,14 @@ while True:
 
         #Check if all letters have been guessed
         if 0 not in answerCorrect:
-            cls()
+            winState = 1
             break
 
-#Win text
-print("You Win!!!")
-print(f"The word was \"{answerWord}\"")
+cls()
+if winState == 1:
+    #Win text
+    print("You Win!!!")
+    print(f"The word was \"{answerWord}\"")
+else:
+    print("You Lost :(")
+    print(f"The word was \"{answerWord}\"")

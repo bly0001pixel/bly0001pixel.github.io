@@ -84,7 +84,7 @@ while True:
         guessLetter = str.capitalize(input("Guess: "))
 
         #Check if guess is a letter
-        if guessLetter in alphabet:
+        if guessLetter in alphabet and guessLetter not in incorrect:
             #Check if guess is in word
             if guessLetter in answerList:
                 #Update correct letters
@@ -101,7 +101,7 @@ while True:
                 print("Incorrect")
                 time.sleep(delay)
         else:
-            print("Not a letter")
+            print("Not valid")
             time.sleep(delay)    
 
         #Check if all letters have been guessed

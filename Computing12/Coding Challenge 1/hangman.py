@@ -115,5 +115,6 @@ if winState == 1:
     print("You Win!!!")
     print(f"The word was \"{answerWord}\"")
 else:
+    #Lose text
     print("You Lost :(")
     print(f"The word was \"{answerWord}\"")

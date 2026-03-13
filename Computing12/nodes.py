@@ -2,8 +2,8 @@ import random
 import itertools
 
 #Initialises Network Variables
-size = 7
-minConnections = 7
+size = 20
+minConnections = 30
 
 def create_network(size, minConenctions):
     #Creates nodes list and emtpy edges dictionary
@@ -43,31 +43,40 @@ def create_network(size, minConenctions):
 
 edges, nodes = create_network(size, minConnections)
 
+def pathfindRecursive(notVisited, layer):
+    while len(notVisited) > 0:
+        nextLayer = []
+
+        for node in layer:
+            for nextNode in edges[node]:
+                if nextNode == dest:
+                    print(f"Last node: {node}")
+                    return node
+                elif nextNode in notVisited:
+                    notVisited.remove(nextNode)
+                    nextLayer.append(nextNode)
+
+        layer = nextLayer.copy()
+    
+        print(f"Next Layer: {nextLayer}")
+        print(f"Not Visited: {notVisited} and {dest}")
+        print()
+
 def pathfind(edges, origin, dest):
     notVisited = [i for i in range(size)]
     notVisited.remove(origin)
+    notVisited.remove(dest)
     layer = edges[origin]
-    while len(notVisited) > 0:
-        nextLayer = []
-        for node in layer:
-            for nextNode in edges[node]:
-                print(nextNode)
-                if nextNode in notVisited:
-                    notVisited.remove(node)
-                    nextLayer.append(node)
-        
-        print(nextLayer)
-
-        break
+    path = [origin,pathfindRecursive(notVisited, layer),dest]
 
 origin = random.randint(0,size-1)
 while True:
     dest = random.randint(0,size-1)
-    if dest != origin:
+    if dest != origin and dest not in edges[origin]:
         break
 
-print(origin)
-print(dest)
+print(f"Origin: {origin}")
+print(f"Destination: {dest}")
 print()
 
 pathfind(edges, origin, dest)

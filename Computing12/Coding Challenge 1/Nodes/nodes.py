@@ -126,6 +126,9 @@ def nodes_main(size, minConnections):
     steps = pathfind_forwards(edges, origin, dest, size)
     route = pathfind_backwards(steps, origin, dest)
 
-    print(route)
+    #Debug prints
+    #for step in steps:
+    #    print(step)
+    #print(route)
 
     return route, connections, origin, dest

@@ -2,7 +2,7 @@ import pygame
 from pygame import Vector2 as v2
 pygame.init()
 from nodes import nodes_main
-import math
+import math, time
 
 FPS, WIDTH, HEIGHT = 60, 700, 700
 window = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -10,22 +10,27 @@ pygame.display.set_caption("Template")
 
 BLACK = (0,0,0)
 GREY = (200,200,200)
+WHITE = (255,255,255)
 GREEN = (0,255,0)
 BLUE = (0,0,255)
 RED = (255,0,0)
 
+FONT1 = pygame.font.SysFont("sansserif", 60, False)
+FONT2 = pygame.font.SysFont("sansserif", 30, False)
+
 #Initialises Network Variables
-size = 15
-minConnections = 10
+size = 20
+minConnections = 20
 
 #Initialise Display Variables
-margin = 50
-radius = 15
+margin = 80
+radius = 10
 center = v2(WIDTH/2,HEIGHT/2)
 largeRadius = (HEIGHT/2)-(margin)
 interval = 360/(size)
-connectionWidth = 3
-routeWidth = 5
+connectionWidth = 4
+routeWidth = 6
+labelDist = 40
 
 nodes = []
 
@@ -34,6 +39,19 @@ class Node:
         self.pos = pos
         self.num = num
         self.colour = colour
+
+textBoxes = []
+
+class TextBox:
+    def __init__(self, text, pos, colour, textID):
+        self.text = text
+        self.colour = colour
+        self.textID = textID
+        if self.textID == 0:
+            self.blit = FONT1.render(self.text, 0, self.colour)
+        elif self.textID == 1:
+            self.blit = FONT2.render(self.text, 0, self.colour)
+        self.pos = v2(pos.x-(self.blit.get_width()/2),pos.y-(self.blit.get_height()/2))
 
 def create_nodes(origin, dest):
     #Create nodes on positive x side
@@ -74,20 +92,41 @@ def create_route(route):
 
     return routeLines
 
-def draw_display(connectionLines, routeLines):
+def create_node_labels():
+    for i in range(size):
+        #Angle and postion of label
+        angle = math.radians(interval*i)
+        labelX = center.x + ((largeRadius+labelDist)*math.sin(angle))
+        labelY = center.y - ((largeRadius+labelDist)*math.cos(angle))
+        labelPos = v2(labelX, labelY)
+        label = TextBox(str(i), labelPos, WHITE, 1)
+        textBoxes.append(label)
+
+def draw_display(connectionLines, routeLines, animationIndex):
     window.fill(BLACK)
 
     #Draw all edges
     for connection in connectionLines:
         pygame.draw.line(window, BLUE, connection[0], connection[1], connectionWidth)
 
-    #Draw route
-    for routeLine in routeLines:
-        pygame.draw.line(window, GREEN, routeLine[0], routeLine[1], routeWidth)
+    #Draw route according to animation progress
+    for i in range(min(len(routeLines),animationIndex)):
+        pygame.draw.line(window, GREEN, routeLines[i][0], routeLines[i][1], routeWidth)
 
     #Draw nodes
     for node in nodes:
         pygame.draw.circle(window, node.colour, node.pos, radius)
+
+    #Draw route length when animation finishes
+    if animationIndex == len(routeLines)+1:
+        for textBox in textBoxes:
+            if textBox.textID == 0:
+                window.blit(textBox.blit, textBox.pos)
+
+    #Draw node labels
+    for textBox in textBoxes:
+        if textBox.textID != 0:
+            window.blit(textBox.blit, textBox.pos)
 
 def main():
     run = True
@@ -101,10 +140,24 @@ def main():
     connectionLines = create_connections(connections)
     routeLines = create_route(route)
 
-    print(len(routeLines))
+    #Initialise Animation Variables
+    animationTime = 0.8
+    animationIndex = 0
+    animationClock = -FPS*animationTime
+
+    #Create route length text
+    routeLengthText = TextBox(str(len(routeLines)),v2(50,50),WHITE, 0)
+    textBoxes.append(routeLengthText)
+
+    #Create node labels
+    create_node_labels()
 
     while run:
         clock.tick(FPS)
+        animationClock += 1
+        if animationClock >= animationTime*FPS:
+            animationIndex = min(len(routeLines)+1,animationIndex+1)
+            animationClock = 0
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -113,8 +166,10 @@ def main():
                 run = False
 
         #Draw and update frame
-        draw_display(connectionLines, routeLines)
+        draw_display(connectionLines, routeLines, animationIndex)
         pygame.display.flip()
+
+        print(animationIndex)
 
     pygame.quit()
 
